@@ -2,7 +2,7 @@ const express = require('express');
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
 require('dotenv').config();
-// const cors = require('cors');
+const cors = require('cors');
 
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -25,45 +25,21 @@ mongoose.connect('mongodb://localhost:27017/bitfilmsdb');
 
 app.use(requestLogger);
 
-// const options = {
-//   origin: ['https://aleksanvp.nomoredomains.work',
-//     'http://aleksanvp.nomoredomains.work',
-//     'localhost:3000',
-//   ],
-//   methods: ['GET,HEAD,PUT,PATCH,POST,DELETE'],
-//   preflightContinue: false,
-//   optionsSuccessStatus: 204,
-//   allowedHeaders: ['Content-type', 'origin', 'Authorization'],
-//   credentials: true,
-// };
+const options = {
+  origin: ['https://api.aleksmovie.nomoredomains.work',
+    'http://api.aleksmovie.nomoredomains.work',
+    'localhost:3000',
+  ],
+  methods: ['GET,HEAD,PUT,PATCH,POST,DELETE'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+  allowedHeaders: ['Content-type', 'origin', 'Authorization'],
+  credentials: true,
+};
 
-// app.use('*', cors(options));
+app.use('*', cors(options));
 
 app.use('/', require('./routes/index'));
-
-// app.get('/crash-test', () => {
-//   setTimeout(() => {
-//     throw new Error('Сервер сейчас упадёт');
-//   }, 0);
-// });
-
-// app.post('/signin', celebrate({
-//   body: Joi.object().keys({
-//     email: Joi.string().required().email(),
-//     password: Joi.string().required(),
-//   }),
-// }), login);
-// app.post('/signup', celebrate({
-//   body: Joi.object().keys({
-//     email: Joi.string().required().email(),
-//     password: Joi.string().required(),
-//     name: Joi.string().required().min(2).max(30),
-//   }),
-// }), createUser);
-
-// app.use('*', auth, (req, res, next) => {
-//   next(new NotFoundError('Страница по указанному маршруту не найдена'));
-// });
 
 app.use(errorLogger);
 
