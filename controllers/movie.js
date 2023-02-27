@@ -4,7 +4,7 @@ const BadRequestError = require('../errors/bad-request-err');
 const ForbiddenError = require('../errors/forbidden-err');
 
 module.exports.getMovies = (req, res, next) => {
-  Movie.find({}).sort({ createdAt: -1 })
+  Movie.find({})
     .then((movies) => res.status(200).send({ data: movies }))
     .catch((err) => {
       next(err);
@@ -35,7 +35,7 @@ module.exports.deleteMovie = async (req, res, next) => {
     } else if (currentUserId === movieToDelete.owner.toString()) {
       Movie.findByIdAndDelete(req.params.movieId)
         .then((card) => res.status(200).send({ data: card }))
-        .catch(() => next(new NotFoundError('Фильм с указанным _id не найден.')));
+        .catch(next);
     } else {
       next(new ForbiddenError('Нельзя удалять чужие фильмы.'));
     }

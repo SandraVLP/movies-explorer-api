@@ -59,6 +59,8 @@ module.exports.patchUserProfile = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные при обновлении профиля.'));
+      } else if (err.code === 11000) {
+        next(new HTPPConflictError('Попытка создать дубликат уникального поля.'));
       } else {
         next(err);
       }
