@@ -1,8 +1,7 @@
 const express = require('express');
-// Слушаем 3000 порт
 require('dotenv').config();
 
-const { PORT, MONGO_BASE } = process.env;
+const { NODE_ENV, PORT, MONGO_BASE } = process.env;
 
 const cors = require('cors');
 
@@ -27,12 +26,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet());
 
-mongoose.connect(MONGO_BASE);
-
+mongoose.connect(NODE_ENV === 'production' ? MONGO_BASE : 'mongodb://localhost:27017/bitfilmsdb');
+app.use(requestLogger);
 // подключаем rate-limiter
 app.use(limiter);
-
-app.use(requestLogger);
 
 const options = {
   origin: ['https://api.aleksmovie.nomoredomains.work',
@@ -55,6 +52,5 @@ app.use(errorLogger);
 app.use(errors()); // обработчик ошибок celebrate
 app.use(errHandler);
 
-app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`);
+app.listen(NODE_ENV === 'production' ? PORT : 3000, () => {
 });

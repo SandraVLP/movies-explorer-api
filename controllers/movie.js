@@ -4,7 +4,7 @@ const BadRequestError = require('../errors/bad-request-err');
 const ForbiddenError = require('../errors/forbidden-err');
 
 module.exports.getMovies = (req, res, next) => {
-  Movie.find({})
+  Movie.find({ owner: req.user._id })
     .then((movies) => res.status(200).send({ data: movies }))
     .catch((err) => {
       next(err);
@@ -28,13 +28,13 @@ module.exports.postMovie = (req, res, next) => {
 
 module.exports.deleteMovie = async (req, res, next) => {
   try {
-    const movieToDelete = await Movie.findOne({ _id: req.params.movieId });
+    const movieToDelete = await Movie.findById(req.params._id);
     const currentUserId = req.user._id;
     if (movieToDelete == null) {
       next(new NotFoundError('Передан несуществующий _id фильма.'));
     } else if (currentUserId === movieToDelete.owner.toString()) {
-      Movie.findByIdAndDelete(req.params.movieId)
-        .then((card) => res.status(200).send({ data: card }))
+      Movie.findByIdAndDelete(req.params._id)
+        .then((movie) => res.status(200).send({ data: movie }))
         .catch(next);
     } else {
       next(new ForbiddenError('Нельзя удалять чужие фильмы.'));
