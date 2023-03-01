@@ -52,5 +52,7 @@ app.use(errorLogger);
 app.use(errors()); // обработчик ошибок celebrate
 app.use(errHandler);
 
-app.listen(NODE_ENV === 'production' ? PORT : 3000, () => {
+const appPort = NODE_ENV === 'production' ? PORT : 3000;
+app.listen(appPort, () => {
+  console.log(`App listening on port ${appPort}`);
 });
